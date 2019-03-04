@@ -1,0 +1,84 @@
+% A crosbreed between Tufte and ArsClassica themes.
+
+\usepackage{ifluatex,ifxetex}
+\usepackage{ifluatex,ifxetex}
+
+% LuaLaTeX fixes, wip  ---------------------------------------------------------
+% fix the definitions to not use `soul`
+% see https://tex.stackexchange.com/questions/200722/xetex-seems-to-break-headers-in-tufte-handout
+% unfourtunately this is not enough to compile the book with LuaLaTeX.
+\ifthenelse{\boolean{xetex}\OR\boolean{luatex}}{
+    \newcommand{\textls}[2][5]{%
+        \begingroup\addfontfeatures{LetterSpace=#1}#2\endgroup
+    }
+    \renewcommand{\allcapsspacing}[1]{\textls[15]{#1}}
+    \renewcommand{\smallcapsspacing}[1]{\textls[10]{#1}}
+    \renewcommand{\allcaps}[1]{\textls[15]{\MakeTextUppercase{#1}}}
+    \renewcommand{\smallcaps}[1]{\smallcapsspacing{\scshape\MakeTextLowercase{#1}}}
+    \renewcommand{\textsc}[1]{\smallcapsspacing{\textsmallcaps{#1}}}
+}{}
+
+
+% FONTS  -----------------------------------------------------------------------
+
+% \usepackage[medium]{CormorantGaramond}  % font weights not working? :(
+% \usepackage[T1]{fontenc}
+%% The font package uses mweights.sty which has som issues with the
+%% \normalfont command. The following two lines fixes this issue.
+% \let\oldnormalfont\normalfont
+% \def\normalfont{\oldnormalfont\mdseries}
+% \fontsize{8pt}{14pt}\selectfont
+
+\usepackage{tgpagella}
+\usepackage[T1]{fontenc}
+
+\ifthenelse{\boolean{xetex}\OR\boolean{luatex}}
+    {\setsansfont[Ligatures=TeX,Numbers=OldStyle]{Iwona}}
+    {\renewcommand{\sfdefault}{iwona}}
+
+
+% TYPOGRAPHY   -----------------------------------------------------------------
+
+\DeclareFixedFont{\chapterNumber}{T1}{qcs}{m}{n}{60}
+
+% Typografic scale
+% Set the font sizes and baselines to match Tufte's books
+\renewcommand\normalsize{%
+   \@setfontsize\normalsize\@xpt{14}%
+   \abovedisplayskip 9\p@ \@plus2\p@ \@minus5\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
+   \belowdisplayskip \abovedisplayskip
+   \let\@listi\@listI}
+\normalbaselineskip=14pt
+\normalsize
+
+% Modify Tuftian-style section headings.  --------------------------------------
+
+% define `spacedallcaps`
+\newcommand{\spacedallcaps}[1]{\textls[160]{\MakeTextUppercase{#1}}}
+
+\titleformat{\chapter}%
+  [display]% shape
+  % format applied to label+text
+  {\relax\ifthenelse{\NOT\boolean{@tufte@symmetric}}{\begin{fullwidth}}{}}
+  {\chapterNumber\thechapter}% label
+  {0pt}% horizontal separation between label and title body
+  {\huge\rmfamily\itshape}% before the title body
+  [\ifthenelse{\NOT\boolean{@tufte@symmetric}}{\end{fullwidth}}{}]% after the title body
+
+\titleformat{\section}%
+  [hang]% shape
+  {\normalfont\small}% format applied to label+text
+  {\makebox[0cm][r]{\thesection\hspace{20pt}}}% label
+  {0pt}% horizontal separation between label and title body
+  {\spacedallcaps}% before the title body
+  []% after the title body
+
+\titleformat{\subsection}%
+  [hang]% shape
+  {\normalfont}% format applied to label+text
+  {\makebox[0cm][r]{\small\thesubsection\hspace{20pt}}}% label
+  {0pt}% horizontal separation between label and title body
+  {\large\itshape}% before the title body
+[]% after the title body
